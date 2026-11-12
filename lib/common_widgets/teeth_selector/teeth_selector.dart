@@ -53,7 +53,17 @@ class TeethSelector extends StatefulWidget {
 class _TeethSelectorState extends State<TeethSelector> {
   bool showPermanent = true;
   bool showPrimary = false;
+  bool _bulkMode = false;
+  final Set<String> _selectedTeeth = <String>{};
+  String? _bulkTreatment;
   late final Map<String, String> _extraNotes;
+
+  Set<String> get _allTeeth => <String>{
+        ...kOpgUpperPermanent,
+        ...kOpgLowerPermanent,
+        ...kOpgUpperPrimary,
+        ...kOpgLowerPrimary,
+      };
 
   @override
   void initState() {
@@ -83,6 +93,95 @@ class _TeethSelectorState extends State<TeethSelector> {
       ..addAll(widget.extraNotes);
   }
 
+  void _toggleSelection(String iso) {
+    setState(() {
+      if (_selectedTeeth.contains(iso)) {
+        _selectedTeeth.remove(iso);
+      } else {
+        _selectedTeeth.add(iso);
+      }
+    });
+  }
+
+  void _applyBulkTreatment() {
+    final treatment = _bulkTreatment;
+    if (treatment == null || treatment.isEmpty || _selectedTeeth.isEmpty) return;
+
+    setState(() {
+      for (final iso in _selectedTeeth) {
+        widget.onNote(iso, treatment);
+      }
+      _selectedTeeth.clear();
+      _bulkMode = false;
+    });
+  }
+
+  Widget _buildBulkToolbar(BuildContext context) {
+    final options = txOptions
+        .where((x) => x.type != StateType.state)
+        .map((x) => x.label)
+        .toList();
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+      decoration: BoxDecoration(
+        color: FluentTheme.of(context).menuColor,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Wrap(
+        alignment: WrapAlignment.center,
+        crossAxisAlignment: WrapCrossAlignment.center,
+        spacing: 8,
+        runSpacing: 8,
+        children: [
+          Button(
+            onPressed: () {
+              setState(() {
+                if (_bulkMode) {
+                  _selectedTeeth.clear();
+                  _bulkMode = false;
+                } else {
+                  _selectedTeeth
+                    ..clear()
+                    ..addAll(_allTeeth);
+                  _bulkMode = true;
+                }
+              });
+            },
+            child: Text(_bulkMode ? 'إلغاء تحديد الكل' : 'تحديد الكل'),
+          ),
+          Button(
+            onPressed: _selectedTeeth.isEmpty
+                ? null
+                : () => setState(() => _selectedTeeth.clear()),
+            child: const Text('مسح التحديد'),
+          ),
+          SizedBox(
+            width: 210,
+            child: ComboBox<String>(
+              value: _bulkTreatment,
+              placeholder: const Text('اختر العلاج'),
+              items: options
+                  .map((label) => ComboBoxItem<String>(
+                        value: label,
+                        child: Text(label),
+                      ))
+                  .toList(),
+              onChanged: (value) => setState(() => _bulkTreatment = value),
+            ),
+          ),
+          Button(
+            onPressed: _selectedTeeth.isEmpty || _bulkTreatment == null
+                ? null
+                : _applyBulkTreatment,
+            child: const Text('تطبيق على المحدد'),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.sizeOf(context).width;
@@ -90,41 +189,50 @@ class _TeethSelectorState extends State<TeethSelector> {
     // A narrow chart only fits one dentition, so compact mode makes the two
     // switches a single either/or choice.
     final primaryShown = compact ? showPrimary && !showPermanent : showPrimary;
-    return OpgDentalChart(
-      isCompactArch: compact,
-      fillCompactHeight: widget.fillCompactHeight,
-      currentNotes: widget.currentNotes,
-      oldNotes: widget.oldNotes,
-      extraNotes: _extraNotes,
-      leftString: widget.leftString,
-      rightString: widget.rightString,
-      textStyle: widget.textStyle,
-      showPermanent: compact ? !primaryShown : showPermanent,
-      showPrimary: compact ? primaryShown : showPrimary,
-      onShowPermanentChanged: (checked) => setState(() {
-        showPermanent = checked;
-        showPrimary = !checked;
-      }),
-      onShowPrimaryChanged: (checked) => setState(() {
-        showPrimary = checked;
-        showPermanent = !checked;
-      }),
-      history: widget.history,
-      historyTitle: widget.historyTitle,
-      onOpenAppointment: widget.onOpenAppointment,
-      notation: widget.notation,
-      type: widget.type,
-      tint: widget.tint,
-      onNote: (iso, tooth) {
-        setState(() {
-          widget.onNote(iso, tooth);
-          if (tooth == null) _extraNotes.remove(iso);
-        });
-      },
-      onExtraNote: (iso, text) {
-        setState(() => _extraNotes[iso] = text);
-        widget.onExtraNote?.call(iso, text);
-      },
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        _buildBulkToolbar(context),
+        OpgDentalChart(
+          isCompactArch: compact,
+          fillCompactHeight: widget.fillCompactHeight,
+          currentNotes: widget.currentNotes,
+          oldNotes: widget.oldNotes,
+          extraNotes: _extraNotes,
+          leftString: widget.leftString,
+          rightString: widget.rightString,
+          textStyle: widget.textStyle,
+          showPermanent: compact ? !primaryShown : showPermanent,
+          showPrimary: compact ? primaryShown : showPrimary,
+          onShowPermanentChanged: (checked) => setState(() {
+            showPermanent = checked;
+            showPrimary = !checked;
+          }),
+          onShowPrimaryChanged: (checked) => setState(() {
+            showPrimary = checked;
+            showPermanent = !checked;
+          }),
+          history: widget.history,
+          historyTitle: widget.historyTitle,
+          onOpenAppointment: widget.onOpenAppointment,
+          notation: widget.notation,
+          type: widget.type,
+          tint: widget.tint,
+          selectionMode: _bulkMode,
+          selectedTeeth: _selectedTeeth,
+          onToggleSelection: _toggleSelection,
+          onNote: (iso, tooth) {
+            setState(() {
+              widget.onNote(iso, tooth);
+              if (tooth == null) _extraNotes.remove(iso);
+            });
+          },
+          onExtraNote: (iso, text) {
+            setState(() => _extraNotes[iso] = text);
+            widget.onExtraNote?.call(iso, text);
+          },
+        ),
+      ],
     );
   }
 }

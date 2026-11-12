@@ -26,6 +26,9 @@ class _OpgToothColumn extends StatefulWidget {
     this.compactSpan = 0,
     this.compactWidth = 0,
     this.archRotation = 0,
+    this.selectionMode = false,
+    this.selectedTeeth = const {},
+    this.onToggleSelection,
   });
 
   final String iso;
@@ -62,6 +65,9 @@ class _OpgToothColumn extends StatefulWidget {
   /// interproximal contact.
   final double compactWidth;
   final double archRotation;
+  final bool selectionMode;
+  final Set<String> selectedTeeth;
+  final ValueChanged<String>? onToggleSelection;
 
   @override
   State<_OpgToothColumn> createState() => _OpgToothColumnState();
@@ -69,6 +75,8 @@ class _OpgToothColumn extends StatefulWidget {
 
 class _OpgToothColumnState extends State<_OpgToothColumn> {
   final FlyoutController _wheelController = FlyoutController();
+
+  bool get isSelected => widget.selectedTeeth.contains(widget.iso);
 
   @override
   void dispose() {
@@ -78,6 +86,10 @@ class _OpgToothColumnState extends State<_OpgToothColumn> {
 
   Future<void> _openWheel(BuildContext context) async {
     try {
+      if (widget.selectionMode && widget.onToggleSelection != null) {
+        widget.onToggleSelection!(widget.iso);
+        return;
+      }
       if (MediaQuery.of(context).size.width > 900) {
         await flyoutFocusFix(context);
         if (!context.mounted) return;

@@ -80,8 +80,9 @@ class _ProcessCpu {
         'CloseHandle');
     _free = kernel.lookupFunction<Pointer<Void> Function(Pointer<Void>),
         Pointer<Void> Function(Pointer<Void>)>('LocalFree');
-    if (_handle == 0 || _buffer.address == 0)
+    if (_handle == 0 || _buffer.address == 0) {
       throw StateError('Cannot read target process CPU');
+    }
   }
   late final int _handle;
   late final Pointer<Uint64> _buffer;
@@ -195,7 +196,7 @@ Future<void> _runFlow(
             'instances': member.instancesCurrent ?? 0,
           }
       ]..sort((a, b) =>
-          (b['bytesCurrent'] as int).compareTo(a['bytesCurrent'] as int));
+          (b['bytesCurrent']! as int).compareTo(a['bytesCurrent']! as int));
       _allocation[label] = classes.take(15).toList();
     } catch (error) {
       _log('memory $label failed: $error');
@@ -293,8 +294,9 @@ Future<void> _runFlow(
     final page = await instanceOf('_PatientsPageState');
     if (page == null) return null;
     final total = field(page, '_totalFilteredCount');
-    if (total is vm.InstanceRef)
+    if (total is vm.InstanceRef) {
       _context['patientsPresent'] = total.valueAsString;
+    }
     final items = field(page, '_displayedItems');
     if (items is! vm.InstanceRef || items.id == null) return null;
     final list = await _bounded(client.getObject(isolate, items.id!));
@@ -307,14 +309,16 @@ Future<void> _runFlow(
       final id = field(patient, 'id');
       if (id is! vm.InstanceRef) continue;
       final title = field(patient, 'title');
-      if (fallback == null && title is vm.InstanceRef)
+      if (fallback == null && title is vm.InstanceRef) {
         selectedPatientTitle = title.valueAsString;
+      }
       fallback ??= id.valueAsString;
       final labelsRef = field(patient, '_labels');
       if (labelsRef is! vm.InstanceRef || labelsRef.id == null) continue;
       final labels = await _bounded(client.getObject(isolate, labelsRef.id!));
-      if (labels is! vm.Instance || (labels.elements?.length ?? 0) < 5)
+      if (labels is! vm.Instance || (labels.elements?.length ?? 0) < 5) {
         continue;
+      }
       final label = await _bounded(client.getObject(
           isolate, (labels.elements![4] as vm.InstanceRef).id!));
       if (label is! vm.Instance) continue;
@@ -358,16 +362,20 @@ Future<void> _runFlow(
       final key = field(node, 'key');
       if (key is! vm.InstanceRef) continue;
       if (key.valueAsString != 'meta:version' &&
-          key.valueAsString != 'meta:deferred') continue;
+          key.valueAsString != 'meta:deferred') {
+        continue;
+      }
       final frame = await objectOf(field(node, 'value'));
       if (frame == null) continue;
       final value = field(frame, 'value');
       if (value is vm.InstanceRef && value.valueAsString != null) {
-        if (key.valueAsString == 'meta:version')
+        if (key.valueAsString == 'meta:version') {
           _context['settingsLocalCursor'] = value.valueAsString;
-        if (key.valueAsString == 'meta:deferred')
+        }
+        if (key.valueAsString == 'meta:deferred') {
           _context['settingsDeferredCount'] =
               (jsonDecode(value.valueAsString!) as Map).length;
+        }
       }
     }
   }
@@ -379,9 +387,10 @@ Future<void> _runFlow(
       _context['restoredBackendMatchesConfigured'] = url is vm.InstanceRef &&
           url.valueAsString?.replaceAll(RegExp(r'/+$'), '') ==
               _server.replaceAll(RegExp(r'/+$'), '');
-      if (url is vm.InstanceRef)
+      if (url is vm.InstanceRef) {
         _context['activeBackendHost'] =
             Uri.tryParse(url.valueAsString ?? '')?.host;
+      }
     }
     for (final name in ['Patients', 'Appointments', 'Notes']) {
       final store = await instanceOf(name);
@@ -468,8 +477,9 @@ Future<void> _runFlow(
     if (controller != null) {
       final loading = await objectOf(field(controller, 'loadingIndicator'));
       final value = loading == null ? null : field(loading, '_value');
-      if (value is vm.InstanceRef)
+      if (value is vm.InstanceRef) {
         _context['loadingIndicator'] = value.valueAsString;
+      }
     }
     final result = await instanceOf('SyncResult');
     if (result != null) {
@@ -497,8 +507,8 @@ Future<void> _runFlow(
         'traceEvents': [
           for (final event in events)
             if (event['ts'] is num &&
-                (event['ts'] as num) >= (entry.value['originMicros'] as int) &&
-                (event['ts'] as num) <= (entry.value['endMicros'] as int))
+                (event['ts'] as num) >= (entry.value['originMicros']! as int) &&
+                (event['ts'] as num) <= (entry.value['endMicros']! as int))
               event,
         ]
       }));
@@ -629,8 +639,9 @@ Future<void> _runFlow(
                         firstMatchOnly: true))));
                 await quiet(2000);
               });
-              if (_windows['patient:panel-open:$run']?['succeeded'] == false)
+              if (_windows['patient:panel-open:$run']?['succeeded'] == false) {
                 break;
+              }
               await _bounded(
                   driver.waitFor(find.byValueKey('fieldPatientName')));
               await step('patient:chart-open:$run', () async {
@@ -752,8 +763,8 @@ Future<void> _runFlow(
     }
     final frames = _framesOf(timeline);
     for (final entry in _windows.entries) {
-      final start = entry.value['originMicros'] as int;
-      final end = entry.value['endMicros'] as int;
+      final start = entry.value['originMicros']! as int;
+      final end = entry.value['endMicros']! as int;
       final window = Timeline.fromJson({
         'traceEvents': [
           for (final event in events)

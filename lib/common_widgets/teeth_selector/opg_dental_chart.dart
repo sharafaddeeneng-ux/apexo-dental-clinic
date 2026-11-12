@@ -117,6 +117,9 @@ class OpgDentalChart extends StatefulWidget {
     this.historyTitle = 'toothHistory',
     this.onOpenAppointment,
     this.tint,
+    this.selectionMode = false,
+    this.selectedTeeth = const {},
+    this.onToggleSelection,
   });
 
   final Map<String, String> currentNotes;
@@ -142,6 +145,11 @@ class OpgDentalChart extends StatefulWidget {
   /// Record-kind colour (violet for a visit, blue for a plan); it tints the
   /// background only, never the teeth. Null keeps the neutral wash.
   final Color? tint;
+
+  /// Makes taps select teeth for a bulk operation instead of opening the wheel.
+  final bool selectionMode;
+  final Set<String> selectedTeeth;
+  final ValueChanged<String>? onToggleSelection;
 
   @override
   State<OpgDentalChart> createState() => _OpgDentalChartState();
@@ -634,6 +642,9 @@ class _OpgDentalChartState extends State<OpgDentalChart> {
         onExtraNote: widget.onExtraNote,
         onOpenAppointment: widget.onOpenAppointment,
         isHovered: _hoveredIso == seat.iso,
+        selectionMode: widget.selectionMode,
+        selectedTeeth: widget.selectedTeeth,
+        onToggleSelection: widget.onToggleSelection,
         onHoverChanged: (hovered) {
           setState(() {
             if (hovered) {
@@ -826,6 +837,9 @@ class _OpgDentalChartState extends State<OpgDentalChart> {
                 onExtraNote: widget.onExtraNote,
                 onOpenAppointment: widget.onOpenAppointment,
                 isHovered: _hoveredIso == isos[i],
+                selectionMode: widget.selectionMode,
+                selectedTeeth: widget.selectedTeeth,
+                onToggleSelection: widget.onToggleSelection,
                 onHoverChanged: (hovered) {
                   setState(() {
                     if (hovered) {
