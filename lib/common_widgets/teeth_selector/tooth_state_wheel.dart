@@ -25,6 +25,7 @@ class ToothStateWheel extends StatefulWidget {
     this.history = const [],
     this.historyTitle = 'toothHistory',
     this.onOpenAppointment,
+    this.clinicalRecordsEditor,
   });
   final String toothName;
   final String iso;
@@ -41,6 +42,7 @@ class ToothStateWheel extends StatefulWidget {
 
   /// The wheel closes itself first; the caller only opens the appointment.
   final ValueChanged<String>? onOpenAppointment;
+  final Widget? clinicalRecordsEditor;
 
   @override
   State<ToothStateWheel> createState() => _ToothStateWheelState();
@@ -170,6 +172,13 @@ class _ToothStateWheelState extends State<ToothStateWheel> {
                   );
                 },
               ),
+              if (widget.clinicalRecordsEditor != null) ...[
+                const SizedBox(height: 12),
+                SizedBox(
+                  width: math.min(MediaQuery.sizeOf(context).width - 48, 420.0),
+                  child: widget.clinicalRecordsEditor!,
+                ),
+              ],
             ],
           ),
         ),
