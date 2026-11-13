@@ -427,6 +427,13 @@ class Patient extends Model {
   /* 5 */ String address = "";
   /* 6 */ List<String> tags = [];
   /* 7 */ String notes = "";
+  /// Structured medical history; absent keys in older records default to empty.
+  String allergies = "";
+  String chronicConditions = "";
+  String currentMedications = "";
+  String pastMedicalHistory = "";
+  String medicalAlerts = "";
+  String medicalNotes = "";
   /* 8 */ Map<String, String> teeth = {};
   /* 8b */ Map<String, String> teethExtraNotes = {};
   /* 9 */ String? link;
@@ -472,6 +479,12 @@ class Patient extends Model {
     /* 5 */ address = json['address'] as String? ?? address;
     /* 6 */ tags = List<String>.from(json['tags'] as List<dynamic>? ?? tags);
     /* 7 */ notes = json['notes'] as String? ?? notes;
+    allergies = json['allergies'] as String? ?? '';
+    chronicConditions = json['chronicConditions'] as String? ?? '';
+    currentMedications = json['currentMedications'] as String? ?? '';
+    pastMedicalHistory = json['pastMedicalHistory'] as String? ?? '';
+    medicalAlerts = json['medicalAlerts'] as String? ?? '';
+    medicalNotes = json['medicalNotes'] as String? ?? '';
     /* 8 */ teeth = Map<String, String>.from(
         json['teeth'] as Map<dynamic, dynamic>? ?? teeth);
     /* 8b */ teethExtraNotes = Map<String, String>.from(
@@ -498,6 +511,12 @@ class Patient extends Model {
     /* 5 */ if (address != d.address) json['address'] = address;
     /* 6 */ if (tags.toString() != d.tags.toString()) json['tags'] = tags;
     /* 7 */ if (notes != d.notes) json['notes'] = notes;
+    if (allergies.trim().isNotEmpty) json['allergies'] = allergies;
+    if (chronicConditions.trim().isNotEmpty) json['chronicConditions'] = chronicConditions;
+    if (currentMedications.trim().isNotEmpty) json['currentMedications'] = currentMedications;
+    if (pastMedicalHistory.trim().isNotEmpty) json['pastMedicalHistory'] = pastMedicalHistory;
+    if (medicalAlerts.trim().isNotEmpty) json['medicalAlerts'] = medicalAlerts;
+    if (medicalNotes.trim().isNotEmpty) json['medicalNotes'] = medicalNotes;
     /* 8 */ if (teeth.isNotEmpty) json['teeth'] = teeth;
     /* 8b */ if (teethExtraNotes.isNotEmpty) {
       json['teethExtraNotes'] = teethExtraNotes;
