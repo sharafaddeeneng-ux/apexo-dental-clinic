@@ -122,6 +122,7 @@ class _ToothClinicalRecordsEditorState
             label: txt('diagnosis'),
             child: TextBox(
               controller: _diagnosis,
+              onChanged: (_) => setState(() {}),
               maxLines: 2,
               placeholder: txt('diagnosis'),
             ),
@@ -131,6 +132,7 @@ class _ToothClinicalRecordsEditorState
             label: txt('treatmentPerformed'),
             child: TextBox(
               controller: _treatment,
+              onChanged: (_) => setState(() {}),
               maxLines: 2,
               placeholder: txt('treatmentPerformed'),
             ),
@@ -140,6 +142,7 @@ class _ToothClinicalRecordsEditorState
             label: txt('notes'),
             child: TextBox(
               controller: _notes,
+              onChanged: (_) => setState(() {}),
               maxLines: 2,
               placeholder: txt('toothRecordNotes'),
             ),
