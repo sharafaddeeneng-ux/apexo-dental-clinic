@@ -497,41 +497,76 @@ class _PatientDetailsState extends State<_PatientDetails> {
         const Divider(),
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 4),
-          child: Row(children: [
-            const Icon(FluentIcons.info, size: 16),
-            const SizedBox(width: 8),
-            Txt(txt("patientMedicalRecord"), style: FluentTheme.of(context).typography.subtitle),
-          ]),
+          child: Row(
+            children: [
+              const Icon(FluentIcons.info, size: 16),
+              const SizedBox(width: 8),
+              Txt(
+                txt("patientMedicalRecord"),
+                style: FluentTheme.of(context).typography.subtitle,
+              ),
+            ],
+          ),
         ),
         InfoLabel(
           label: "${txt("allergies")}:",
           isHeader: true,
-          child: CupertinoTextField(controller: allergiesController, onChanged: (value) => widget.patient.allergies = value, maxLines: 2, placeholder: txt("allergiesHint")),
+          child: CupertinoTextField(
+            controller: allergiesController,
+            onChanged: (value) => widget.patient.allergies = value,
+            maxLines: 2,
+            placeholder: txt("allergiesHint"),
+          ),
         ),
         InfoLabel(
           label: "${txt("chronicConditions")}:",
           isHeader: true,
-          child: CupertinoTextField(controller: chronicConditionsController, onChanged: (value) => widget.patient.chronicConditions = value, maxLines: 2, placeholder: txt("chronicConditionsHint")),
+          child: CupertinoTextField(
+            controller: chronicConditionsController,
+            onChanged: (value) => widget.patient.chronicConditions = value,
+            maxLines: 2,
+            placeholder: txt("chronicConditionsHint"),
+          ),
         ),
         InfoLabel(
           label: "${txt("currentMedications")}:",
           isHeader: true,
-          child: CupertinoTextField(controller: currentMedicationsController, onChanged: (value) => widget.patient.currentMedications = value, maxLines: 2, placeholder: txt("currentMedicationsHint")),
+          child: CupertinoTextField(
+            controller: currentMedicationsController,
+            onChanged: (value) => widget.patient.currentMedications = value,
+            maxLines: 2,
+            placeholder: txt("currentMedicationsHint"),
+          ),
         ),
         InfoLabel(
           label: "${txt("pastMedicalHistory")}:",
           isHeader: true,
-          child: CupertinoTextField(controller: pastMedicalHistoryController, onChanged: (value) => widget.patient.pastMedicalHistory = value, maxLines: 3, placeholder: txt("pastMedicalHistoryHint")),
+          child: CupertinoTextField(
+            controller: pastMedicalHistoryController,
+            onChanged: (value) => widget.patient.pastMedicalHistory = value,
+            maxLines: 3,
+            placeholder: txt("pastMedicalHistoryHint"),
+          ),
         ),
         InfoLabel(
           label: "${txt("medicalAlerts")}:",
           isHeader: true,
-          child: CupertinoTextField(controller: medicalAlertsController, onChanged: (value) => widget.patient.medicalAlerts = value, maxLines: 2, placeholder: txt("medicalAlertsHint")),
+          child: CupertinoTextField(
+            controller: medicalAlertsController,
+            onChanged: (value) => widget.patient.medicalAlerts = value,
+            maxLines: 2,
+            placeholder: txt("medicalAlertsHint"),
+          ),
         ),
         InfoLabel(
           label: "${txt("medicalNotes")}:",
           isHeader: true,
-          child: CupertinoTextField(controller: medicalNotesController, onChanged: (value) => widget.patient.medicalNotes = value, maxLines: 3, placeholder: txt("medicalNotesHint")),
+          child: CupertinoTextField(
+            controller: medicalNotesController,
+            onChanged: (value) => widget.patient.medicalNotes = value,
+            maxLines: 3,
+            placeholder: txt("medicalNotesHint"),
+          ),
         ),
         InfoLabel(
           label: "${txt("patientTags")}:",
