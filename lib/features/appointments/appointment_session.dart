@@ -43,6 +43,7 @@ final class AppointmentSession implements HostedRecordSession {
     final chart = appointmentDentalChart(
       draft,
       onSave: () => session.save(),
+      onClinicalRecordChanged: () => session.refreshDirty(),
     );
     session = AppointmentSession._(
       item: draft,
