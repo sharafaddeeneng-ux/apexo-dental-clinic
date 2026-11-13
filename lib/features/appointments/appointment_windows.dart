@@ -1165,6 +1165,10 @@ class AppointmentBandDetails extends StatefulWidget {
 class _AppointmentBandDetailsState extends State<AppointmentBandDetails> {
   late final TextEditingController _notes =
       TextEditingController(text: widget.appointment.preOpNotes);
+  late final TextEditingController _chiefComplaint =
+      TextEditingController(text: widget.appointment.chiefComplaint);
+  late final TextEditingController _symptoms =
+      TextEditingController(text: widget.appointment.symptoms);
 
   @override
   void initState() {
@@ -1179,6 +1183,8 @@ class _AppointmentBandDetailsState extends State<AppointmentBandDetails> {
     // follows the appointment it is given.
     if (!identical(oldWidget.appointment, widget.appointment)) {
       _notes.text = widget.appointment.preOpNotes;
+      _chiefComplaint.text = widget.appointment.chiefComplaint;
+      _symptoms.text = widget.appointment.symptoms;
     }
   }
 
@@ -1186,6 +1192,8 @@ class _AppointmentBandDetailsState extends State<AppointmentBandDetails> {
   void dispose() {
     transcriptionEditCounter.unObserve(_readAgain);
     _notes.dispose();
+    _chiefComplaint.dispose();
+    _symptoms.dispose();
     super.dispose();
   }
 
@@ -1274,6 +1282,34 @@ class _AppointmentBandDetailsState extends State<AppointmentBandDetails> {
             appointmentId: appointment.id,
             onChanged: () => setState(() {}),
           ),
+        ),
+        const SizedBox(height: 4),
+        LiveTranscribingTextField(
+          controller: _chiefComplaint,
+          expands: false,
+          maxLines: 2,
+          micPlacement: MicPlacement.none,
+          padding: const EdgeInsetsDirectional.fromSTEB(8, 4, 8, 4),
+          style: const TextStyle(fontSize: 11),
+          placeholder: "${txt("chiefComplaint")}...",
+          onChanged: (value) {
+            appointment.chiefComplaint = value;
+            widget.onEdited?.call();
+          },
+        ),
+        const SizedBox(height: 4),
+        LiveTranscribingTextField(
+          controller: _symptoms,
+          expands: false,
+          maxLines: 2,
+          micPlacement: MicPlacement.none,
+          padding: const EdgeInsetsDirectional.fromSTEB(8, 4, 8, 4),
+          style: const TextStyle(fontSize: 11),
+          placeholder: "${txt("symptoms")}...",
+          onChanged: (value) {
+            appointment.symptoms = value;
+            widget.onEdited?.call();
+          },
         ),
         const SizedBox(height: 4),
         LiveTranscribingTextField(
