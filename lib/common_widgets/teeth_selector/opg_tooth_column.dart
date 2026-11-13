@@ -19,6 +19,7 @@ class _OpgToothColumn extends StatefulWidget {
     required this.onNote,
     required this.onExtraNote,
     required this.onOpenAppointment,
+    required this.clinicalRecordsBuilder,
     required this.isHovered,
     required this.onHoverChanged,
     this.compact = false,
@@ -47,6 +48,7 @@ class _OpgToothColumn extends StatefulWidget {
   final void Function(String iso, String? note) onNote;
   final void Function(String iso, String extraNote)? onExtraNote;
   final ValueChanged<String>? onOpenAppointment;
+  final Widget Function(String tooth)? clinicalRecordsBuilder;
   final bool isHovered;
   final ValueChanged<bool> onHoverChanged;
 
@@ -131,6 +133,7 @@ class _OpgToothColumnState extends State<_OpgToothColumn> {
       history: widget.history,
       historyTitle: widget.historyTitle,
       onOpenAppointment: widget.onOpenAppointment,
+      clinicalRecordsEditor: widget.clinicalRecordsBuilder?.call(widget.iso),
       onSet: (note) => widget.onNote(widget.iso, note),
     );
   }
