@@ -1,4 +1,5 @@
 import 'package:apexo/core/model.dart';
+import 'package:apexo/features/appointments/tooth_clinical_record.dart';
 import 'package:apexo/features/accounts/accounts_controller.dart';
 import 'package:apexo/services/launch.dart';
 import 'package:apexo/features/patients/patient_model.dart';
@@ -140,6 +141,8 @@ class Appointment extends Model {
   /* 10 */ bool isDone = false;
   /* 11 */ Map<String, String> teeth = {};
   /* 11b */ Map<String, String> teethExtraNotes = {};
+  /// Multiple dated clinical entries per tooth; older records without this key remain valid.
+  Map<String, List<ToothClinicalRecord>> toothClinicalRecords = {};
   /* 12 */ bool hasLabwork = false;
   /* 13 */ String labName = "";
   /* 14 */ String labworkNotes = "";
@@ -147,6 +150,55 @@ class Appointment extends Model {
   /* 16 */ Map<String, String> drawings = {};
   /* 17 */ int duration = 15; // in minutes, default 15
   /* 18 */ List<String> dcmImgs = [];
+
+  /// Adds a dated clinical entry to a tooth using FDI two-digit notation.
+  /// A tooth may have multiple diagnoses and procedures over one visit.
+  ToothClinicalRecord addToothClinicalRecord({
+    required String tooth,
+    String diagnosis = '',
+    String treatment = '',
+    String notes = '',
+    DateTime? recordedAt,
+  }) {
+    const validTeeth = {
+      '11','12','13','14','15','16','17','18',
+      '21','22','23','24','25','26','27','28',
+      '31','32','33','34','35','36','37','38',
+      '41','42','43','44','45','46','47','48',
+      '51','52','53','54','55','61','62','63','64','65',
+      '71','72','73','74','75','81','82','83','84','85',
+    };
+    if (!validTeeth.contains(tooth)) {
+      throw ArgumentError.value(tooth, 'tooth', 'Invalid FDI tooth number');
+    }
+    if (diagnosis.trim().isEmpty &&
+        treatment.trim().isEmpty &&
+        notes.trim().isEmpty) {
+      throw ArgumentError('A diagnosis, treatment, or note is required');
+    }
+    final timestamp = (recordedAt ?? DateTime.now()).toUtc();
+    final entries = toothClinicalRecords.putIfAbsent(tooth, () => []);
+    final record = ToothClinicalRecord(
+      id: '${timestamp.microsecondsSinceEpoch}-${entries.length}',
+      tooth: tooth,
+      recordedAt: timestamp,
+      diagnosis: diagnosis,
+      treatment: treatment,
+      notes: notes,
+    );
+    entries.add(record);
+    return record;
+  }
+
+  /// Removes one entry without affecting other entries for the same tooth.
+  bool removeToothClinicalRecord(String tooth, String recordId) {
+    final entries = toothClinicalRecords[tooth];
+    if (entries == null) return false;
+    entries.removeWhere((record) => record.id == recordId);
+    if (entries.isEmpty) toothClinicalRecords.remove(tooth);
+    return entries.length < (toothClinicalRecords[tooth]?.length ?? 0) ||
+        !toothClinicalRecords.containsKey(tooth);
+  }
 
   @override
   Appointment copy(bool blank) {
@@ -180,6 +232,17 @@ class Appointment extends Model {
         json['teeth'] as Map<dynamic, dynamic>? ?? teeth);
     /* 11b */ teethExtraNotes = Map<String, String>.from(
         json['teethExtraNotes'] as Map<dynamic, dynamic>? ?? teethExtraNotes);
+    final rawToothRecords =
+        json['toothClinicalRecords'] as Map<dynamic, dynamic>?;
+    if (rawToothRecords != null) {
+      toothClinicalRecords = {
+        for (final entry in rawToothRecords.entries)
+          entry.key.toString(): (entry.value as List<dynamic>)
+              .map((record) => ToothClinicalRecord.fromJson(
+                  Map<String, dynamic>.from(record as Map)))
+              .toList(),
+      };
+    }
     /* 12 */ hasLabwork = json["hasLabwork"] as bool? ?? hasLabwork;
     /* 13 */ labName = json["labName"] as String? ?? labName;
     /* 14 */ labworkNotes = json["labworkNotes"] as String? ?? labworkNotes;
@@ -217,6 +280,13 @@ class Appointment extends Model {
     /* 11 */ if (teeth.isNotEmpty) json['teeth'] = teeth;
     /* 11b */ if (teethExtraNotes.isNotEmpty) {
       json['teethExtraNotes'] = teethExtraNotes;
+    }
+    if (toothClinicalRecords.isNotEmpty) {
+      json['toothClinicalRecords'] = {
+        for (final entry in toothClinicalRecords.entries)
+          if (entry.value.isNotEmpty)
+            entry.key: entry.value.map((record) => record.toJson()).toList(),
+      };
     }
     /* 12 */ if (hasLabwork != d.hasLabwork) json['hasLabwork'] = hasLabwork;
     /* 13 */ if (labName != d.labName) json['labName'] = labName;
