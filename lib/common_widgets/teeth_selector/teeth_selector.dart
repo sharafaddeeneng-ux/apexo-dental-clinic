@@ -17,6 +17,7 @@ class TeethSelector extends StatefulWidget {
     this.history = const [],
     this.historyTitle = 'toothHistory',
     this.onOpenAppointment,
+    this.clinicalRecordsBuilder,
     this.tint,
     this.fillCompactHeight = false,
     required this.notation,
@@ -38,6 +39,7 @@ class TeethSelector extends StatefulWidget {
   final List<ToothHistory> history;
   final String historyTitle;
   final ValueChanged<String>? onOpenAppointment;
+  final Widget Function(String tooth)? clinicalRecordsBuilder;
   final StateType type;
 
   /// Record-kind tint; null keeps the neutral radiographic wash.
@@ -215,6 +217,7 @@ class _TeethSelectorState extends State<TeethSelector> {
           history: widget.history,
           historyTitle: widget.historyTitle,
           onOpenAppointment: widget.onOpenAppointment,
+          clinicalRecordsBuilder: widget.clinicalRecordsBuilder,
           notation: widget.notation,
           type: widget.type,
           tint: widget.tint,
