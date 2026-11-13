@@ -2,6 +2,7 @@ import 'package:apexo/common_widgets/teeth_selector/tooth_history.dart';
 import 'package:apexo/common_widgets/teeth_selector/tx_options.dart';
 import 'package:apexo/features/appointments/appointment_chart_footer.dart';
 import 'package:apexo/features/appointments/appointment_model.dart';
+import 'package:apexo/features/appointments/tooth_clinical_records_editor.dart';
 import 'package:apexo/features/appointments/appointment_owner_line.dart';
 import 'package:apexo/features/appointments/open_appointment.dart';
 import 'package:apexo/features/appointments/visit_scope_bar.dart';
@@ -17,6 +18,7 @@ DentalChartSession appointmentDentalChart(
   Appointment appointment, {
   ValueChanged<String>? onOpenAppointment,
   Future<void> Function()? onSave,
+  VoidCallback? onClinicalRecordChanged,
 }) {
   final patient = appointment.patient;
   return DentalChartSession(
@@ -63,6 +65,11 @@ DentalChartSession appointmentDentalChart(
       session: session,
     ),
     onSave: onSave,
+    clinicalRecordsBuilder: (tooth) => ToothClinicalRecordsEditor(
+      appointment: appointment,
+      tooth: tooth,
+      onChanged: onClinicalRecordChanged,
+    ),
   );
 }
 
