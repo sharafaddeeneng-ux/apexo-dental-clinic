@@ -193,6 +193,25 @@ void main() {
           'Post-operative sensitivity');
     });
 
+    test('removes only the selected clinical record for a tooth', () {
+      final appointment = Appointment.fromJson({'id': 'tooth-delete'});
+      final first = appointment.addToothClinicalRecord(
+        tooth: '26',
+        diagnosis: 'Caries',
+      );
+      final second = appointment.addToothClinicalRecord(
+        tooth: '26',
+        treatment: 'Restoration',
+      );
+
+      expect(appointment.removeToothClinicalRecord('26', first.id), isTrue);
+      expect(appointment.toothClinicalRecords['26'], hasLength(1));
+      expect(appointment.toothClinicalRecords['26']!.single.id, second.id);
+      expect(appointment.removeToothClinicalRecord('26', 'missing'), isFalse);
+      expect(appointment.removeToothClinicalRecord('26', second.id), isTrue);
+      expect(appointment.toothClinicalRecords.containsKey('26'), isFalse);
+    });
+
     test('older appointment JSON defaults tooth clinical records to empty', () {
       expect(
         Appointment.fromJson({'id': 'legacy'}).toothClinicalRecords,
