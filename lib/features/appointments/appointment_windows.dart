@@ -523,16 +523,23 @@ class AppointmentDetailsForm extends StatefulWidget {
 
 class _AppointmentDetailsFormState extends State<AppointmentDetailsForm> {
   final TextEditingController noteController = TextEditingController();
+  final TextEditingController chiefComplaintController =
+      TextEditingController();
+  final TextEditingController symptomsController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     noteController.text = widget.appointment.preOpNotes;
+    chiefComplaintController.text = widget.appointment.chiefComplaint;
+    symptomsController.text = widget.appointment.symptoms;
   }
 
   @override
   void dispose() {
     noteController.dispose();
+    chiefComplaintController.dispose();
+    symptomsController.dispose();
     super.dispose();
   }
 
@@ -595,6 +602,32 @@ class _AppointmentDetailsFormState extends State<AppointmentDetailsForm> {
                 widget.appointment.operatorsIDs = s;
                 widget.onEdited?.call();
               }),
+        ),
+        InfoLabel(
+          label: "${txt("chiefComplaint")}:",
+          child: LiveTranscribingTextField(
+            controller: chiefComplaintController,
+            expands: false,
+            maxLines: 2,
+            placeholder: "${txt("chiefComplaint")}...",
+            onChanged: (value) {
+              widget.appointment.chiefComplaint = value;
+              widget.onEdited?.call();
+            },
+          ),
+        ),
+        InfoLabel(
+          label: "${txt("symptoms")}:",
+          child: LiveTranscribingTextField(
+            controller: symptomsController,
+            expands: false,
+            maxLines: 2,
+            placeholder: "${txt("symptoms")}...",
+            onChanged: (value) {
+              widget.appointment.symptoms = value;
+              widget.onEdited?.call();
+            },
+          ),
         ),
         InfoLabel(
           label: "${txt("date")}:",
@@ -691,6 +724,9 @@ class AppointmentOperativeForm extends StatefulWidget {
 
 class _AppointmentOperativeFormState extends State<AppointmentOperativeForm> {
   final TextEditingController postOpNotesController = TextEditingController();
+  final TextEditingController diagnosisController = TextEditingController();
+  final TextEditingController treatmentPerformedController =
+      TextEditingController();
   final MoneyEditingController priceController = MoneyEditingController();
   final MoneyEditingController paidController = MoneyEditingController();
 
@@ -730,6 +766,8 @@ class _AppointmentOperativeFormState extends State<AppointmentOperativeForm> {
 
   void _fillControllers() {
     postOpNotesController.text = widget.appointment.postOpNotes;
+    diagnosisController.text = widget.appointment.diagnosis;
+    treatmentPerformedController.text = widget.appointment.treatmentPerformed;
     priceController.text =
         moneyInputFormatter.formatDouble(widget.appointment.price);
     paidController.text =
@@ -761,6 +799,8 @@ class _AppointmentOperativeFormState extends State<AppointmentOperativeForm> {
   @override
   void dispose() {
     postOpNotesController.dispose();
+    diagnosisController.dispose();
+    treatmentPerformedController.dispose();
     priceController.dispose();
     paidController.dispose();
     priceFocus.dispose();
@@ -865,6 +905,34 @@ class _AppointmentOperativeFormState extends State<AppointmentOperativeForm> {
             },
           ),
         ),
+        InfoLabel(
+          label: "${txt("diagnosis")}:",
+          child: LiveTranscribingTextField(
+            controller: diagnosisController,
+            expands: false,
+            maxLines: 2,
+            placeholder: "${txt("diagnosis")}...",
+            onChanged: (value) {
+              appointment.diagnosis = value;
+              widget.onEdited?.call();
+            },
+          ),
+        ),
+        const SizedBox(height: 5),
+        InfoLabel(
+          label: "${txt("treatmentPerformed")}:",
+          child: LiveTranscribingTextField(
+            controller: treatmentPerformedController,
+            expands: false,
+            maxLines: 2,
+            placeholder: "${txt("treatmentPerformed")}...",
+            onChanged: (value) {
+              appointment.treatmentPerformed = value;
+              widget.onEdited?.call();
+            },
+          ),
+        ),
+        const SizedBox(height: 5),
         LayoutBuilder(
           builder: (context, constraints) {
             final notes = LiveTranscribingTextField(
