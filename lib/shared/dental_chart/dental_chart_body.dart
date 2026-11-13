@@ -36,6 +36,7 @@ class DentalChartBody extends StatelessWidget {
           fillCompactHeight: overlay != null,
           historyTitle: session.historyTitle,
           history: session.history(),
+          clinicalRecordsBuilder: session.clinicalRecordsBuilder,
           onOpenAppointment: session.onOpenAppointment,
           onNote: (iso, note) {
             if (note != null) {
