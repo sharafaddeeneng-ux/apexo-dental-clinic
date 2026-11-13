@@ -167,6 +167,51 @@ void main() {
       expect(original.copy(false).diagnosis, 'Dental caries');
     });
 
+
+    test('round-trip preserves multiple dated clinical records per tooth', () {
+      final appointment = Appointment.fromJson({'id': 'tooth-records'});
+      appointment.addToothClinicalRecord(
+        tooth: '16',
+        diagnosis: 'Dental caries',
+        treatment: 'Composite restoration',
+        notes: 'Deep distal lesion',
+        recordedAt: DateTime.utc(2026, 11, 13, 10),
+      );
+      appointment.addToothClinicalRecord(
+        tooth: '16',
+        diagnosis: 'Post-operative sensitivity',
+        recordedAt: DateTime.utc(2026, 11, 14, 10),
+      );
+
+      final restored = Appointment.fromJson(appointment.toJson());
+      expect(restored.toothClinicalRecords['16'], hasLength(2));
+      expect(restored.toothClinicalRecords['16']![0].diagnosis,
+          'Dental caries');
+      expect(restored.toothClinicalRecords['16']![0].treatment,
+          'Composite restoration');
+      expect(restored.toothClinicalRecords['16']![1].diagnosis,
+          'Post-operative sensitivity');
+    });
+
+    test('older appointment JSON defaults tooth clinical records to empty', () {
+      expect(
+        Appointment.fromJson({'id': 'legacy'}).toothClinicalRecords,
+        isEmpty,
+      );
+    });
+
+    test('rejects invalid FDI tooth numbers and empty entries', () {
+      final appointment = Appointment.fromJson({'id': 'validation'});
+      expect(
+        () => appointment.addToothClinicalRecord(tooth: '99', diagnosis: 'X'),
+        throwsArgumentError,
+      );
+      expect(
+        () => appointment.addToothClinicalRecord(tooth: '16'),
+        throwsArgumentError,
+      );
+    });
+
     test('excludes computed "title" key', () {
       final json = testAppointment(id: 't1').toJson();
       expect(json.containsKey('title'), false);
