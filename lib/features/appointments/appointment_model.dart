@@ -127,6 +127,11 @@ class Appointment extends Model {
   /* 2 */ String? patientID;
   /* 3 */ String preOpNotes = "";
   /* 4 */ String postOpNotes = "";
+  /// Structured clinical intake and outcome fields; absent in older records.
+  String chiefComplaint = "";
+  String symptoms = "";
+  String diagnosis = "";
+  String treatmentPerformed = "";
   /* 5 */ List<String> prescriptions = [];
   /* 6 */ double price = 0;
   /* 7 */ double paid = 0;
@@ -158,6 +163,11 @@ class Appointment extends Model {
     /* 3 */ patientID = json["patientID"] as String? ?? patientID;
     /* 4 */ preOpNotes = json["preOpNotes"] as String? ?? preOpNotes;
     /* 5 */ postOpNotes = json["postOpNotes"] as String? ?? postOpNotes;
+    chiefComplaint = json["chiefComplaint"] as String? ?? chiefComplaint;
+    symptoms = json["symptoms"] as String? ?? symptoms;
+    diagnosis = json["diagnosis"] as String? ?? diagnosis;
+    treatmentPerformed =
+        json["treatmentPerformed"] as String? ?? treatmentPerformed;
     /* 6 */ price = double.parse((json["price"] ?? price).toString());
     /* 7 */ paid = double.parse((json["paid"] ?? paid).toString());
     /* 8 */ imgs = List<String>.from(json["imgs"] as List<dynamic>? ?? imgs);
@@ -191,6 +201,14 @@ class Appointment extends Model {
     /* 3 */ if (patientID != d.patientID) json['patientID'] = patientID;
     /* 4 */ if (preOpNotes != d.preOpNotes) json['preOpNotes'] = preOpNotes;
     /* 5 */ if (postOpNotes != d.postOpNotes) json['postOpNotes'] = postOpNotes;
+    if (chiefComplaint != d.chiefComplaint) {
+      json['chiefComplaint'] = chiefComplaint;
+    }
+    if (symptoms != d.symptoms) json['symptoms'] = symptoms;
+    if (diagnosis != d.diagnosis) json['diagnosis'] = diagnosis;
+    if (treatmentPerformed != d.treatmentPerformed) {
+      json['treatmentPerformed'] = treatmentPerformed;
+    }
     /* 6 */ if (price != d.price) json['price'] = price;
     /* 7 */ if (paid != d.paid) json['paid'] = paid;
     /* 8 */ if (imgs.isNotEmpty) json['imgs'] = imgs;
