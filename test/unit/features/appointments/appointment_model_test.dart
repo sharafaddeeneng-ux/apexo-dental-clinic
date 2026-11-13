@@ -18,6 +18,10 @@ void main() {
         'isDone': true,
         'preOpNotes': 'Sensitive tooth',
         'postOpNotes': 'Done',
+        'chiefComplaint': 'Tooth pain',
+        'symptoms': 'Pain on chewing',
+        'diagnosis': 'Reversible pulpitis',
+        'treatmentPerformed': 'Temporary restoration',
         'prescriptions': ['Amox'],
         'teeth': {'11': 'filling'},
         'teethExtraNotes': {'11': 'Deep'},
@@ -39,6 +43,10 @@ void main() {
       expect(appt.isDone, true);
       expect(appt.preOpNotes, 'Sensitive tooth');
       expect(appt.postOpNotes, 'Done');
+      expect(appt.chiefComplaint, 'Tooth pain');
+      expect(appt.symptoms, 'Pain on chewing');
+      expect(appt.diagnosis, 'Reversible pulpitis');
+      expect(appt.treatmentPerformed, 'Temporary restoration');
       expect(appt.prescriptions, ['Amox']);
       expect(appt.teeth, {'11': 'filling'});
       expect(appt.hasLabwork, true);
@@ -54,6 +62,10 @@ void main() {
       final appt = Appointment.fromJson({'id': 'min'});
       expect(appt.operatorsIDs, isEmpty);
       expect(appt.patientID, isNull);
+      expect(appt.chiefComplaint, isEmpty);
+      expect(appt.symptoms, isEmpty);
+      expect(appt.diagnosis, isEmpty);
+      expect(appt.treatmentPerformed, isEmpty);
       expect(appt.price, 0.0);
       expect(appt.paid, 0.0);
       expect(appt.isDone, false);
@@ -111,6 +123,10 @@ void main() {
       expect(json.containsKey('prescriptions'), isFalse);
       expect(json.containsKey('imgs'), isFalse);
       expect(json.containsKey('dcmImgs'), isFalse);
+      expect(json.containsKey('chiefComplaint'), isFalse);
+      expect(json.containsKey('symptoms'), isFalse);
+      expect(json.containsKey('diagnosis'), isFalse);
+      expect(json.containsKey('treatmentPerformed'), isFalse);
       expect(json['date'], isA<int>());
     });
   });
@@ -132,6 +148,23 @@ void main() {
       expect(json['price'], 200);
       expect(json['paid'], 150);
       expect(json['isDone'], true);
+    });
+
+    test('round-trip preserves structured clinical visit fields', () {
+      final original = Appointment.fromJson({
+        'id': 'clinical-round-trip',
+        'chiefComplaint': 'Tooth pain',
+        'symptoms': 'Sensitivity to cold',
+        'diagnosis': 'Dental caries',
+        'treatmentPerformed': 'Composite filling',
+      });
+      final restored = Appointment.fromJson(original.toJson());
+
+      expect(restored.chiefComplaint, 'Tooth pain');
+      expect(restored.symptoms, 'Sensitivity to cold');
+      expect(restored.diagnosis, 'Dental caries');
+      expect(restored.treatmentPerformed, 'Composite filling');
+      expect(original.copy(false).diagnosis, 'Dental caries');
     });
 
     test('excludes computed "title" key', () {
