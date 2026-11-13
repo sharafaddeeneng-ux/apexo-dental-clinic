@@ -116,6 +116,7 @@ class OpgDentalChart extends StatefulWidget {
     this.history = const [],
     this.historyTitle = 'toothHistory',
     this.onOpenAppointment,
+    this.clinicalRecordsBuilder,
     this.tint,
     this.selectionMode = false,
     this.selectedTeeth = const {},
@@ -141,6 +142,7 @@ class OpgDentalChart extends StatefulWidget {
   final List<ToothHistory> history;
   final String historyTitle;
   final ValueChanged<String>? onOpenAppointment;
+  final Widget Function(String tooth)? clinicalRecordsBuilder;
 
   /// Record-kind colour (violet for a visit, blue for a plan); it tints the
   /// background only, never the teeth. Null keeps the neutral wash.
@@ -641,6 +643,7 @@ class _OpgDentalChartState extends State<OpgDentalChart> {
         onNote: widget.onNote,
         onExtraNote: widget.onExtraNote,
         onOpenAppointment: widget.onOpenAppointment,
+        clinicalRecordsBuilder: widget.clinicalRecordsBuilder,
         isHovered: _hoveredIso == seat.iso,
         selectionMode: widget.selectionMode,
         selectedTeeth: widget.selectedTeeth,
@@ -836,6 +839,7 @@ class _OpgDentalChartState extends State<OpgDentalChart> {
                 onNote: widget.onNote,
                 onExtraNote: widget.onExtraNote,
                 onOpenAppointment: widget.onOpenAppointment,
+                clinicalRecordsBuilder: widget.clinicalRecordsBuilder,
                 isHovered: _hoveredIso == isos[i],
                 selectionMode: widget.selectionMode,
                 selectedTeeth: widget.selectedTeeth,
