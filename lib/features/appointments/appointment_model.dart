@@ -194,10 +194,11 @@ class Appointment extends Model {
   bool removeToothClinicalRecord(String tooth, String recordId) {
     final entries = toothClinicalRecords[tooth];
     if (entries == null) return false;
+    final previousLength = entries.length;
     entries.removeWhere((record) => record.id == recordId);
+    final removed = entries.length < previousLength;
     if (entries.isEmpty) toothClinicalRecords.remove(tooth);
-    return entries.length < (toothClinicalRecords[tooth]?.length ?? 0) ||
-        !toothClinicalRecords.containsKey(tooth);
+    return removed;
   }
 
   @override
