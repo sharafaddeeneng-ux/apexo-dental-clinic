@@ -111,6 +111,25 @@ void main() {
     expect(session.chart.hasChanges, isFalse);
   });
 
+  test('save persists structured clinical visit fields', () async {
+    appointments.set(stored());
+    final session = appointmentSessions.getOrCreate(stored());
+    session.item
+      ..chiefComplaint = 'Tooth pain'
+      ..symptoms = 'Pain on chewing'
+      ..diagnosis = 'Dental caries'
+      ..treatmentPerformed = 'Composite restoration';
+
+    await session.save();
+
+    final saved = appointments.get('visit-1')!;
+    expect(saved.chiefComplaint, 'Tooth pain');
+    expect(saved.symptoms, 'Pain on chewing');
+    expect(saved.diagnosis, 'Dental caries');
+    expect(saved.treatmentPerformed, 'Composite restoration');
+    expect(session.hasPendingEdits, isFalse);
+  });
+
   test('acknowledging a field does not acknowledge the draft', () async {
     appointments.set(stored());
     final session = appointmentSessions.getOrCreate(stored());
