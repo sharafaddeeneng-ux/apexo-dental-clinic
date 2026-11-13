@@ -1,3 +1,4 @@
+import 'package:apexo/common_widgets/button_styles.dart';
 import 'package:apexo/features/appointments/appointment_model.dart';
 import 'package:apexo/features/appointments/tooth_clinical_record.dart';
 import 'package:apexo/services/localization/locale.dart';
@@ -78,7 +79,7 @@ class _ToothClinicalRecordsEditorState
       width: double.infinity,
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: theme.cardColor,
+        color: theme.menuColor,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: theme.inactiveColor.withValues(alpha: 0.35),
@@ -90,7 +91,7 @@ class _ToothClinicalRecordsEditorState
         children: [
           Row(
             children: [
-              Icon(FluentIcons.health, size: 15, color: theme.accentColor),
+              Icon(FluentIcons.history, size: 15, color: theme.accentColor),
               const SizedBox(width: 7),
               Expanded(
                 child: Text(
@@ -170,7 +171,7 @@ class _ToothClinicalRecordsEditorState
       margin: const EdgeInsets.only(bottom: 6),
       padding: const EdgeInsetsDirectional.fromSTEB(9, 7, 5, 7),
       decoration: BoxDecoration(
-        color: theme.micaBackgroundColor,
+        color: theme.inactiveBackgroundColor,
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
