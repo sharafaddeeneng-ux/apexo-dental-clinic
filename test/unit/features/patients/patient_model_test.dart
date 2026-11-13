@@ -98,30 +98,67 @@ void main() {
 
   group('Patient medical record', () {
     test('reads structured medical fields and preserves them through JSON', () {
-      final patient = Patient.fromJson({'id': 'medical-1', 'allergies': 'Penicillin', 'chronicConditions': 'Type 2 diabetes', 'currentMedications': 'Metformin 500 mg', 'pastMedicalHistory': 'Appendectomy in 2018', 'medicalAlerts': 'Check blood glucose before treatment', 'medicalNotes': 'Patient reports sensitivity to latex.'});
+      final patient = Patient.fromJson({
+        'id': 'medical-1',
+        'allergies': 'Penicillin',
+        'chronicConditions': 'Type 2 diabetes',
+        'currentMedications': 'Metformin 500 mg',
+        'pastMedicalHistory': 'Appendectomy in 2018',
+        'medicalAlerts': 'Check blood glucose before treatment',
+        'medicalNotes': 'Patient reports sensitivity to latex.',
+      });
       final json = patient.toJson();
+
       expect(patient.allergies, 'Penicillin');
       expect(patient.chronicConditions, 'Type 2 diabetes');
       expect(patient.currentMedications, 'Metformin 500 mg');
       expect(patient.pastMedicalHistory, 'Appendectomy in 2018');
       expect(patient.medicalAlerts, 'Check blood glucose before treatment');
       expect(patient.medicalNotes, 'Patient reports sensitivity to latex.');
-      for (final key in ['allergies', 'chronicConditions', 'currentMedications', 'pastMedicalHistory', 'medicalAlerts', 'medicalNotes']) { expect(json[key], isNotEmpty); }
+      for (final key in [
+        'allergies',
+        'chronicConditions',
+        'currentMedications',
+        'pastMedicalHistory',
+        'medicalAlerts',
+        'medicalNotes',
+      ]) {
+        expect(json[key], isNotEmpty);
+      }
     });
-    test('older records default medical fields to empty and omit them on save', () {
+
+    test('older records default medical fields to empty and omit them on save',
+        () {
       final patient = Patient.fromJson({'id': 'legacy-medical'});
+
       expect(patient.allergies, isEmpty);
       expect(patient.chronicConditions, isEmpty);
       expect(patient.currentMedications, isEmpty);
       expect(patient.pastMedicalHistory, isEmpty);
       expect(patient.medicalAlerts, isEmpty);
       expect(patient.medicalNotes, isEmpty);
+
       final json = patient.toJson();
-      for (final key in ['allergies', 'chronicConditions', 'currentMedications', 'pastMedicalHistory', 'medicalAlerts', 'medicalNotes']) { expect(json.containsKey(key), isFalse); }
+      for (final key in [
+        'allergies',
+        'chronicConditions',
+        'currentMedications',
+        'pastMedicalHistory',
+        'medicalAlerts',
+        'medicalNotes',
+      ]) {
+        expect(json.containsKey(key), isFalse);
+      }
     });
+
     test('copy retains medical history', () {
-      final original = Patient.fromJson({'id': 'medical-copy', 'allergies': 'Latex', 'medicalAlerts': 'Premedication required'});
+      final original = Patient.fromJson({
+        'id': 'medical-copy',
+        'allergies': 'Latex',
+        'medicalAlerts': 'Premedication required',
+      });
       final copy = original.copy(false);
+
       expect(copy.allergies, 'Latex');
       expect(copy.medicalAlerts, 'Premedication required');
     });
