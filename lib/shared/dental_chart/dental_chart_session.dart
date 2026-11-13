@@ -22,6 +22,7 @@ final class DentalChartSession {
     this.header,
     this.footer,
     this.onSave,
+    this.clinicalRecordsBuilder,
   })  : _savedTeeth = Map.of(teeth),
         _savedExtraNotes = Map.of(extraNotes);
 
@@ -62,6 +63,9 @@ final class DentalChartSession {
 
   /// The standalone half — null only when a panel owns the draft and saves it.
   final Future<void> Function()? onSave;
+
+  /// Optional per-tooth clinical editor, supplied by visit-scoped charts.
+  final Widget Function(String tooth)? clinicalRecordsBuilder;
 
   /// Bumped on every edit, so whatever is drawing the chart redraws too.
   final ObservableState<int> revision = ObservableState(0);
